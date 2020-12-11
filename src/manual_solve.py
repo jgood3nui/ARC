@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# https://github.com/jgood3nui/ARC.git
+# Student Name: Jonathan Good
+# Student Number: 20235990
 
 import os, sys
 import json
