@@ -39,41 +39,55 @@ def solve_681b3aeb(x):
     for shape in shapes:
         # Get the width and height
         h, w = shape.shape
-        
-        print(shape)
-        # Create the filler needed to 
+
+        # Create the filler needed to create the target shape
         if h < target_h:
             filler_h = np.full((target_h-h,w), 0)
-            print(filler_h)
         else:
             filler_h = None
-
         if w < target_w:
             filler_w = np.full((target_h,target_w-w,), 0)
-            print(filler_w)
         else:
             filler_w = None
+        
+        # If a shape is already in the target shape then add to candidate list as is
+        if w == target_w and h == target_h:
+             candidates.append(shape)
 
         
-        perm_h = list(itertools.permutations([filler_h, shape]))
+        # Get the permuations of filler and shape
+        # so it can try had to top or bottom / left or right
+        perm_h = list(itertools.permutations([filler_h, shape]))       
         perm_w = list(itertools.permutations([filler_w, shape]))
         
+        # Create all the combinations of filler and shape
         combinations = itertools.product(perm_h, perm_w)
 
+        # For each combination
         for h, w in combinations:
             h_a, h_b = h
             w_a, w_b = w
             
-            if h_a is not None and h_b is not None:
+            # Combine filler and shape
+            bool_h = (h_a is not None and h_b is not None)
+            if bool_h:
                 s = np.concatenate((h_a,h_b), axis=0)
             if w_a is not None and w_b is not None:
+                if np.count_nonzero(w_a == 0) == w_a.size and bool_h:
+                    w_b = s
+                elif bool_h:
+                    w_a = s
                 s = np.concatenate((w_a,w_b), axis=1) 
             candidates.append(s)
    
     solution = np.empty(0)
-            
+        
+    # Get a pair of each combination from the candidates     
     for shape_a, shape_b in list(itertools.permutations(candidates,2)):
+        # Add the shapes together
         solution = np.add(shape_a,shape_b)
+        # If the only colours in the final shape are the colours of the shapes 
+        # with no black squares the solution is found and the loop is exited
         compare = np.unique(solution) == np.unique(colours)
         if isinstance(compare, bool):
             match = compare
