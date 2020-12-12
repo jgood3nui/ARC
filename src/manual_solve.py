@@ -8,6 +8,7 @@ import json
 import numpy as np
 import re
 import itertools
+from sklearn.linear_model import LinearRegression
 
 ### YOUR CODE HERE: write at least three functions which solve
 ### specific tasks by transforming the input x and returning the
@@ -135,6 +136,26 @@ def solve_5ad4f10b(x):
  
     return convert_shapes(x, target_h, target_w)
 
+def train(task, x):
+    # for each task, read the data and call test()
+    directory = os.path.join("..", "data", "training")
+    json_filename = os.path.join(directory, task + ".json")
+    data = read_ARC_JSON(json_filename)
+    train_input, train_output, test_input, test_output = data
+    
+    x = np.array([len(np.unique(item) )-1 for item in train_input]).reshape(1,-1)
+    y = np.array([item.shape[0] for item in train_output]).reshape(1,-1)
+
+    z = np.array([len(np.unique(item) )-1 for item in test_input]).reshape(1,-1)
+    
+    return predict_size(x, y, z)
+    
+
+def predict_size(x, y, z):
+    model = LinearRegression().fit(x, y)
+    size = model.predict(z)[0]
+
+    return size
 
 def del_squares(x, colour):
     for i in reversed(range(0, len(x))):
