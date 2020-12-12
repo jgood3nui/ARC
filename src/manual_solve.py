@@ -16,7 +16,7 @@ import itertools
 ### must be in the data/training directory, not data/evaluation.
 def solve_681b3aeb(x):
 
-    target_h,target_w = 3,3
+    target_h, target_w = 3,3
 
     # Get unique colours from grid excluding black 
     colours = np.delete(np.unique(x), [0])
@@ -98,11 +98,44 @@ def solve_681b3aeb(x):
     
     return solution
 
-def solve_b2862040(x):
+def solve_ac0a08a4(x):
+    
     return x
 
-def solve_05269061(x):
-    return x
+def solve_5ad4f10b(x):
+    target_h, target_w, target_colour = 3,3,0
+    shape = np.empty(0)
+    # Get unique colours from grid excluding black 
+    colours = np.delete(np.unique(x), [0])
+   
+    # Find the most common colour
+    max_count = 0
+    for colour in colours:
+        count = np.count_nonzero(x == colour)
+        if count > max_count:
+            target_colour = colour
+    
+    # Get the shape by removing rows that don't contain the main colour
+    for x in range(0,4):
+        shape = np.rot90(del_squares(shape,target_colour))
+        
+    # Remove additional colours other than black and the main colour
+    for colour in colours:
+        if colour != target_colour:
+            shape =  np.where(shape == colour,0, x)
+
+    h, w = shape.shape
+    new_shape = np.empty(target_h, target_w)
+    orig_co = co_oridinates(h)
+    new_co = co_oridinates(target_h)
+
+    for i in range(0,9):
+        row_o, col_o = orig_co(i)
+        row_n, col_n = new_co(i)
+
+        new_shape[row_n[0]:row_n[1], col_n[0]:col_n[1]] = np.unique(shape[row_o[0]:row_o[0], col_o[0]:col_o[1]])[0]
+
+    return new_shape
 
 
 def del_squares(x, colour):
@@ -111,6 +144,14 @@ def del_squares(x, colour):
             x = np.delete(x,i, axis=0)
             
     return x
+
+def co_oridinates(l):
+    step =int(l/3)
+    l = []
+    for i in range(0, l, step):
+        l.append(list([i, i+step]))
+    
+    return list(itertools.product(l, l))
 
 def main():
     # Find all the functions defined in this file whose names are
