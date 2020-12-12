@@ -103,7 +103,7 @@ def solve_ac0a08a4(x):
     return x
 
 def solve_5ad4f10b(x):
-    target_h, target_w, target_colour = 3,3,0
+    target_h, target_w, target_colour, change_colour = 3,3,0,0
     # Get unique colours from grid excluding black 
     colours = np.delete(np.unique(x), [0])
    
@@ -117,15 +117,15 @@ def solve_5ad4f10b(x):
     
     # Get the shape by removing rows that don't contain the main colour
     for i in range(0,4):
-        print(x)
         x = del_squares(np.rot90(x), target_colour)
         
     # Remove additional colours other than black and the main colour
     for colour in colours:
         if colour != target_colour:
+            change_colour = colour
             x =  np.where(x == colour,0, x)
-
-    print(x)
+    
+    x = np.where(x == target_colour, change_colour, x)
     h, w = x.shape
     new_shape = np.full((target_h, target_w), 0)
     orig_co = co_oridinates(h)
@@ -137,7 +137,7 @@ def solve_5ad4f10b(x):
 
         uni = np.unique(x[row_o[0]:row_o[1], col_o[0]:col_o[1]])
 
-        new_shape[row_n[0]:row_n[1], col_n[0]:col_n[1]] = uni[0]
+        new_shape[row_n[0]:row_n[1], col_n[0]:col_n[1]] = [[uni[0]]]
 
     return new_shape
 
