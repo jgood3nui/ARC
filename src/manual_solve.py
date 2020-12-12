@@ -99,8 +99,14 @@ def solve_681b3aeb(x):
     return solution
 
 def solve_ac0a08a4(x):
+    # Get unique colours from grid excluding black 
+    colours = np.delete(np.unique(x), [0])
     
-    return x
+    l = len(colours) * 3
+    target_h = l
+    target_w = l
+    
+    return convert_shapes(x, target_h, target_w)
 
 def solve_5ad4f10b(x):
     target_h, target_w, target_colour, change_colour = 3,3,0,0
@@ -126,20 +132,8 @@ def solve_5ad4f10b(x):
             x =  np.where(x == colour,0, x)
     
     x = np.where(x == target_colour, change_colour, x)
-    h, w = x.shape
-    new_shape = np.full((target_h, target_w), 0)
-    orig_co = co_oridinates(h)
-    new_co = co_oridinates(target_h)
-
-    for i in range(0,9):
-        row_o, col_o = orig_co[i]
-        row_n, col_n = new_co[i]
-
-        uni = np.unique(x[row_o[0]:row_o[1], col_o[0]:col_o[1]])
-
-        new_shape[row_n[0]:row_n[1], col_n[0]:col_n[1]] = [[uni[0]]]
-
-    return new_shape
+ 
+    return convert_shapes(x, target_h, target_w)
 
 
 def del_squares(x, colour):
@@ -156,6 +150,23 @@ def co_oridinates(l):
         lst.append(list([i, i+step]))
     
     return list(itertools.product(lst, lst))
+
+def convert_shapes(x, target_h, target_w):
+    h, w = x.shape
+    
+    new_shape = np.full((target_h, target_w), 0)
+    orig_co = co_oridinates(h)
+    new_co = co_oridinates(target_h)
+
+    for i in range(0,9):
+        row_o, col_o = orig_co[i]
+        row_n, col_n = new_co[i]
+
+        uni = np.unique(x[row_o[0]:row_o[1], col_o[0]:col_o[1]])
+
+        new_shape[row_n[0]:row_n[1], col_n[0]:col_n[1]] = [[uni[0]]]
+        
+    return new_shape
 
 def main():
     # Find all the functions defined in this file whose names are
