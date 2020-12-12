@@ -7,14 +7,82 @@ import os, sys
 import json
 import numpy as np
 import re
+import itertools
 
 ### YOUR CODE HERE: write at least three functions which solve
 ### specific tasks by transforming the input x and returning the
 ### result. Name them according to the task ID as in the three
 ### examples below. Delete the three examples. The tasks you choose
 ### must be in the data/training directory, not data/evaluation.
-def solve_6a1e5592(x):
-    return x
+def solve_681b3aeb(x):
+
+    target_h,target_w = 3,3
+
+    # Get unique colours from grid excluding black 
+    colours = np.delete(np.unique(x), [0])
+    shapes = []
+    
+    # For each unique colour found
+    for colour in colours:
+        # Delete any rows that don't contain the colour
+        shape = del_squares(x, colour)
+        # Rotate and delete any row that don't contain the colour
+        # This should leave a rectangle containing mostly just the shpae
+        shape = del_squares(np.rot90(shape), colour)
+        # Return the shape to original orientation
+        shape = np.rot90(shape,3)
+        # Add to list of found shapes
+        shapes.append(shape)
+     
+    candidates = []    
+    # For each shape found
+    for shape in shapes:
+        # Get the width and height
+        h, w = shape.shape
+        
+        print(shape)
+        # Create the filler needed to 
+        if h < target_h:
+            filler_h = np.full((target_h-h,w), 0)
+            print(filler_h)
+        else:
+            filler_h = None
+
+        if w < target_w:
+            filler_w = np.full((target_h,target_w-w,), 0)
+            print(filler_w)
+        else:
+            filler_w = None
+
+        
+        perm_h = list(itertools.permutations([filler_h, shape]))
+        perm_w = list(itertools.permutations([filler_w, shape]))
+        
+        combinations = itertools.product(perm_h, perm_w)
+
+        for h, w in combinations:
+            h_a, h_b = h
+            w_a, w_b = w
+            
+            if h_a is not None and h_b is not None:
+                s = np.concatenate((h_a,h_b), axis=0)
+            if w_a is not None and w_b is not None:
+                s = np.concatenate((w_a,w_b), axis=1) 
+            candidates.append(s)
+   
+    solution = np.empty(0)
+            
+    for shape_a, shape_b in list(itertools.permutations(candidates,2)):
+        solution = np.add(shape_a,shape_b)
+        compare = np.unique(solution) == np.unique(colours)
+        if isinstance(compare, bool):
+            match = compare
+        elif isinstance(compare, np.ndarray):
+            match = compare.all()
+        if match:
+            break
+    
+    return solution
 
 def solve_b2862040(x):
     return x
@@ -22,6 +90,13 @@ def solve_b2862040(x):
 def solve_05269061(x):
     return x
 
+
+def del_squares(x, colour):
+    for i in reversed(range(0, len(x))):
+        if colour not in x[i]:
+            x = np.delete(x,i, axis=0)
+            
+    return x
 
 def main():
     # Find all the functions defined in this file whose names are
