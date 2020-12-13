@@ -8,6 +8,7 @@ import json
 import numpy as np
 import re
 import itertools
+from math import sqrt
 from sklearn.linear_model import LinearRegression
 
 ### YOUR CODE HERE: write at least three functions which solve
@@ -110,17 +111,25 @@ def solve_ac0a08a4(x):
     return convert_shapes(x, target_h, target_w)
 
 def solve_5ad4f10b(x):
-    target_h, target_w, target_colour, change_colour = 3,3,0,0
+    target_h = train('5ad4f10b', x, size_of_shape)
+    target_w = target_h
+
+    target_colour, change_colour = 0,0
     # Get unique colours from grid excluding black 
     colours = np.delete(np.unique(x), [0])
    
-    # Find the most common colour
-    max_count = 0
+    # Find the colour with the least distance between first last index
+    max_dist= 0
     for colour in colours:      
-        count = np.count_nonzero(x == colour)
-        if count > max_count:
+        indexes = np.array(np.where(x == colour))
+        x2,y2 = indexes[::,-1]
+        x1,y1 = indexes[::,0]
+
+        dist = sqrt( (x2 - x1)**2 + (y2 - y1)**2 )
+
+        if dist < max_dist or max_dist == 0:
             target_colour = colour
-            max_count = count
+            max_dist = dist
     
     # Get the shape by removing rows that don't contain the main colour
     for i in range(0,4):
@@ -134,28 +143,35 @@ def solve_5ad4f10b(x):
     
     x = np.where(x == target_colour, change_colour, x)
  
+    print(x, 'change_colour', change_colour, 'target_colour', target_colour)
     return convert_shapes(x, target_h, target_w)
 
-def train(task, x):
+def train(task, x, f):
     # for each task, read the data and call test()
     directory = os.path.join("..", "data", "training")
     json_filename = os.path.join(directory, task + ".json")
     data = read_ARC_JSON(json_filename)
     train_input, train_output, test_input, test_output = data
     
-    x = np.array([len(np.unique(item) )-1 for item in train_input]).reshape(1,-1)
-    y = np.array([item.shape[0] for item in train_output]).reshape(1,-1)
-
-    z = np.array([len(np.unique(item) )-1 for item in test_input]).reshape(1,-1)
+    #en(np.unique(item) ) - 1
     
-    return predict_size(x, y, z)
+    x = np.array([f(item) for item in train_input]).reshape(-1,1)
+    y = np.array([item.shape[0] for item in train_output]).reshape(-1,1)
+
+    z = np.array([f(item) for item in x]).reshape(-1,1)
+    return int(predict_size(x, y, z)[0])
     
 
 def predict_size(x, y, z):
-    model = LinearRegression().fit(x, y)
-    size = model.predict(z)[0]
+    model = LinearRegression().fit(x.reshape(-1,1), y)
+    size = model.predict(z)
+    return size[0]
 
-    return size
+def size_of_shape(x):
+    return x.shape[0]
+
+def number_of_colours(x):
+    return len(np.unique(x) ) - 1
 
 def del_squares(x, colour):
     for i in reversed(range(0, len(x))):
