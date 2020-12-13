@@ -1,13 +1,12 @@
 # The Abstraction and Reasoning Corpus (ARC)
 
-This repository contains the ARC task data, as well as a browser-based interface for humans to try their hand at solving the tasks manually.
+This repository contains the ARC task data and a manual solution file for some of tasks, as well as a browser-based interface for humans to try their hand at solving the tasks manually.
 
 *"ARC can be seen as a general artificial intelligence benchmark, as a program synthesis benchmark, or as a psychometric intelligence test. It is targeted at both humans and artificially intelligent systems that aim at emulating a human-like form of general fluid intelligence."*
 
 A complete description of the dataset, its goals, and its underlying logic, can be found in: [The Measure of Intelligence](https://arxiv.org/abs/1911.01547).
 
 As a reminder, a test-taker is said to solve a task when, upon seeing the task for the first time, they are able to produce the correct output grid for *all* test inputs in the task (this includes picking the dimensions of the output grid). For each test input, the test-taker is allowed 3 trials (this holds for all test-takers, either humans or AI).
-
 
 ## Task file format
 
@@ -30,6 +29,9 @@ A "grid" is a rectangular matrix (list of lists) of integers between 0 and 9 (in
 
 When looking at a task, a test-taker has access to inputs & outputs of the demonstration pairs, plus the input(s) of the test pair(s). The goal is to construct the output grid(s) corresponding to the test input grid(s), using 3 trials for each test input. "Constructing the output grid" involves picking the height and width of the output grid, then filling each cell in the grid with a symbol (integer between 0 and 9, which are visualized as colors). Only *exact* solutions (all cells match the expected answer) can be said to be correct.
 
+# Manual Solution File
+
+The manual_solution.py file contains some functions for testing and solving some of the ARC tasks. Specifically task 681b3aeb, ac0a08a4, b91ae062 and 5ad4f10b. Calling any of the solve_<task id> functions and passing in a grid will return the result back in a numpy array format. The file also contains test functions for running all the solve_<task id> solutions by importing the training and testing json data for the relevant task.
 
 ## Usage of the testing interface
 
