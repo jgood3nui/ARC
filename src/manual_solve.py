@@ -18,7 +18,8 @@ from sklearn.linear_model import LinearRegression
 ### must be in the data/training directory, not data/evaluation.
 def solve_681b3aeb(x):
 
-    target_h, target_w = 3,3
+    target_h = train('681b3aeb', x, size_of_shape)
+    target_w = target_h
 
     # Get unique colours from grid excluding black 
     colours = np.delete(np.unique(x), [0])
@@ -143,7 +144,6 @@ def solve_5ad4f10b(x):
     
     x = np.where(x == target_colour, change_colour, x)
  
-    print(x, 'change_colour', change_colour, 'target_colour', target_colour)
     return convert_shapes(x, target_h, target_w)
 
 def train(task, x, f):
