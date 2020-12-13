@@ -12,6 +12,8 @@ from math import sqrt
 from sklearn.linear_model import LinearRegression
 
 '''
+Summary/Reflection
+
 For a number of these task I have tried to optimize them for generality 
 and flexibility in line with the spirit of Chollet's paper "On the Measure of 
 Intelligence". Generalization as he outlines is the ability to handle tasks 
@@ -22,10 +24,18 @@ Intelligence would then be skill (ability to win at chess) plus adapability
 hard coding a solution is obviously not intelligence neither is simpley adding more 
 training data.
 
-All the solutions use a Scikit-learn linear regression model to predict
-the solution's final shape based on the training examples and many utilise
-the convert_shape function. ac0a08a4 and b91ae062 have the same code bar the 
+All the solutions use a Scikit-learn (open source machine learning library)
+linear regression model to predict the solution's final shape based on the 
+training examples and many utilise the convert_shape function. ac0a08a4 and b91ae062 have the same code bar the 
 task id passed to the regression model for getting the training examples. 
+
+These solutions also heavily make us of numpy arrays. The numpy library comes
+with many useful functions such finding the unique values (.unique), deleting rows (.delete),
+finding values (.where) and rotating the grid (.rot90).
+
+Itertools allows combinding lists to get each possible been them and saves on createing
+for loops within for loops. The library also contains combinations which produces 
+all possible combinations of its elements of a given length
 
 '''
 
