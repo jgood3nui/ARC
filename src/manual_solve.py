@@ -103,11 +103,10 @@ def solve_681b3aeb(x):
 
 def solve_ac0a08a4(x):
     # Get unique colours from grid excluding black 
-    colours = np.delete(np.unique(x), [0])
+    target_h = train('ac0a08a4', x, number_of_colours)
+    target_w = target_h
     
-    l = len(colours) * 3
-    target_h = l
-    target_w = l
+    print('TARGET', target_w, target_h)
     
     return convert_shapes(x, target_h, target_w)
 
@@ -155,23 +154,27 @@ def train(task, x, f):
     
     #en(np.unique(item) ) - 1
     
-    x = np.array([f(item) for item in train_input]).reshape(-1,1)
+    w = np.array([f(item) for item in train_input]).reshape(-1,1)
     y = np.array([item.shape[0] for item in train_output]).reshape(-1,1)
 
-    z = np.array([f(item) for item in x]).reshape(-1,1)
-    return int(predict_size(x, y, z)[0])
+    z = np.array(f(x)).reshape(-1,1)
+    
+    result = predict_size(w, y, z)
+
+    return int(round(result[0][0]))
     
 
-def predict_size(x, y, z):
-    model = LinearRegression().fit(x.reshape(-1,1), y)
+def predict_size(w, y, z):
+    model = LinearRegression().fit(w, y)
     size = model.predict(z)
-    return size[0]
+    print(size)
+    return size
 
 def size_of_shape(x):
     return x.shape[0]
 
 def number_of_colours(x):
-    return len(np.unique(x) ) - 1
+    return len(np.delete(np.unique(x) , [0]))
 
 def del_squares(x, colour):
     for i in reversed(range(0, len(x))):
